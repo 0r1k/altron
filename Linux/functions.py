@@ -40,7 +40,7 @@ def get_weather(PyOWM_var):
     return det, tnow, flike, wspeed, wdeg
 
 
-def sound_change(to_value=-1, change=0):
+def volume_change(to_value=-1, change=0):
     if to_value != -1:
         subprocess.run(
             ['amixer', '-D', 'pulse', 'sset', 'Master', str(to_value)])
@@ -50,3 +50,5 @@ def sound_change(to_value=-1, change=0):
         level_was = int(re.findall('Playback.+\d{2,3}%', getval)[0][-3:-1])
         subprocess.run(['amixer', '-D', 'pulse', 'sset',
                        'Master', str(level_was+change)])
+
+#net search is in main.py file 'cause there's only 1-2 strokes

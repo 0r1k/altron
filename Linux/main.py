@@ -1,6 +1,5 @@
 import pyaudio
 from pyowm import owm
-import pyttsx3
 import speech_recognition as sr
 import os
 import pyautogui
@@ -15,10 +14,8 @@ print(alias['names'])
 
 #variables
 owmap = pyowm.OWM('44e45e2833d1c08430d69d5a7c59ac39')
-e = pyttsx3.init()
-vs = e.getProperty('voices')
-e.setProperty('voice', 'ru')
-e.setProperty('rate', 50)
+
+wait_mode = False
 
 r = sr.Recognizer()
 
@@ -74,25 +71,35 @@ def callback(v):
 
 
 def exec(task, args):
+    global wait_mode
     if task == 0:
         pass
-    elif task == 'weather':
-        det, tnow, flike, wspeed, wdeg = get_weather(PyOWM_var=owmap)
-        print(det, tnow, flike, wspeed, wdeg)
-        speak(f"""{det}, {int(tnow)} градусов, ощущается как {int(flike)}. Ветер {wdeg}, {int(wspeed)} метров в секунду""")
-    elif task == 'google':
-        webbrowser.get(using=browser).open_new_tab(
-            'https://www.google.com/search?q='+args)
-    elif task == 'open':
-        for anm in ['программу', 'приложение']:
-            if anm in args:
-                args.replace(anm, '')
-        startapp(args.strip())
-    elif task == 'vol-down' or task == 'vol-up':
-        if 'до' in args:
-            sound_change(int(args[-3:]))
-        elif 'на' in args:
-            sound_change(change=(-1)**((task == 'vol-up')+1)*int(args[-3:]))
+    elif not wait_mode:
+        if task == 'weather':
+            det, tnow, flike, wspeed, wdeg = get_weather(PyOWM_var=owmap)
+            print(det, tnow, flike, wspeed, wdeg)
+            speak(f"""{det}, {int(tnow)} градусов, ощущается как {int(flike)}. Ветер {wdeg}, {int(wspeed)} метров в секунду""")
+        elif task == 'google':
+            webbrowser.get(using=browser).open_new_tab(
+                'https://www.google.com/search?q='+args)
+        elif task == 'open':
+            for anm in ['программу', 'приложение']:
+                if anm in args:
+                    args.replace(anm, '')
+            startapp(args.strip())
+        elif task.startswith('vol'):
+            if 'до' in args:
+                volume_change(int(args[-3:]))
+            elif 'на' in args:
+                volume_change(change=(-1)**((task == 'vol-up')+1)*int(args[-3:]))
+        elif task=='play' or task=='pause':
+            subprocess.call(['playerctl', 'play-pause'])
+        elif task=='wait':
+            wait_mode = True
+    else:
+        if task=='start':
+            wait_mode = False
+
 
 
 getinfo()
