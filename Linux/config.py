@@ -1,4 +1,9 @@
-browser = 'firefox'
+import configparser
+
+from keyboard import is_pressed
+from functions import speak
+
+conf = configparser.ConfigParser()
 
 alias = {
     "names": ["альтрона", "альтрон"],
@@ -20,3 +25,21 @@ alias = {
         'start': ['ты тут'],
     },
 }
+
+
+def firstConfig():
+    speak("""Введите некоторую информацию для начала работы.
+    Нажмите клавишу Enter, чтобы продолжить или клавишу esc, чтобы закрыть программу""")
+    if is_pressed('enter'):
+        pass
+    elif is_pressed('esc'):
+        return
+    speak("Как к вам обращаться?")
+    conf.set('DEFAULT', 'name', input())
+    speak("Какой вы браузер используете? Напишите его название на английском")
+    conf.set('DEFAULT', 'browser', input())
+    speak("В каком вы городе живёте? Напишите его название на английском")
+    conf.set('DEFAULT', 'city', input())
+    #adding to the file
+    f = open("./Linux/config.ini", 'w')
+    conf.write(f)

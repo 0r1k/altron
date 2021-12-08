@@ -9,7 +9,7 @@ You ask me <b>"But what is that?"</b>:hushed:<br>
 
 Okay, I think a lot of people watched "Iron Man" and everyone knows that Tony Stark had HIS OWN voice assistant "Jarvis", right?:smirk:<br>
 
-<h4 align='center'>YES! Altron is Jarvis in real life. Of course, it is not absolutely th same thing but at least very close to that:sweat_smile:</h4>
+<h4 align='center'>YES! Altron is Jarvis in real life. Of course, it is not absolutely the same thing but at least very close to that:sweat_smile:</h4>
 
 <b>In the end</b> it will be available on<br>
 <ul><b>

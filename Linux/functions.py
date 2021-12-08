@@ -2,7 +2,11 @@ import pyautogui
 import time
 import subprocess
 import re
+import os
+from config import conf
 
+def speak(what):
+    os.system("echo {} | RHVoice-test -p Aleksandr".format(what))
 
 def startapp(nameapp):
     pyautogui.hotkey('alt', 'f2')
@@ -14,7 +18,7 @@ def startapp(nameapp):
 
 
 def get_weather(PyOWM_var):
-    w = PyOWM_var.weather_manager().weather_at_place('Kazan').weather
+    w = PyOWM_var.weather_manager().weather_at_place(conf.get("DEFAULT", 'city')).weather
     temp = w.temperature(unit='celsius')  # temperature
     tnow = temp['temp']  # now
     flike = temp['feels_like']

@@ -9,20 +9,23 @@ from config import *
 import subprocess
 import time
 from functions import *
-
-print(alias['names'])
+import configparser
 
 #variables
+
 owmap = pyowm.OWM('44e45e2833d1c08430d69d5a7c59ac39')
 
 wait_mode = False
 
 r = sr.Recognizer()
 
+#program main work
+if os.stat("./Linux/config.ini").st_size == 0:
+    firstConfig()
 
-def speak(what):
-    os.system("echo {} | RHVoice-test -p Aleksandr".format(what))
-
+if os.stat("./Linux/config.ini").st_size == 0:
+    exit()
+        
 
 def getinfo():
     try:
