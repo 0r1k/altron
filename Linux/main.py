@@ -83,7 +83,7 @@ def exec(task, args):
             print(det, tnow, flike, wspeed, wdeg)
             speak(f"""{det}, {int(tnow)} градусов, ощущается как {int(flike)}. Ветер {wdeg}, {int(wspeed)} метров в секунду""")
         elif task == 'google':
-            webbrowser.get(using=browser).open_new_tab(
+            webbrowser.get(using=conf.get("DEFAULT", 'name', 'browser')).open_new_tab(
                 'https://www.google.com/search?q='+args)
         elif task == 'open':
             for anm in ['программу', 'приложение']:
