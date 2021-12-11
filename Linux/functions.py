@@ -4,6 +4,7 @@ import subprocess
 import re
 import os
 from config import conf
+from main import callback, exec
 
 def speak(what):
     os.system("echo {} | RHVoice-test -p Aleksandr".format(what))
@@ -56,3 +57,16 @@ def volume_change(to_value=-1, change=0):
                        'Master', str(level_was+change)])
 
 #net search is in main.py file 'cause there's only 1-2 strokes
+
+def addmacros(confile, name, cmds):
+    confile['MACROSES'] = {
+        f'{name}': f"{cmds.join(' ')}",
+    }
+    with open('config.ini', 'w') as f:
+        confile.write(f)
+
+def exec_macros(confile, name):
+    vs = confile['MACROSES'][name].split()
+    for voice in vs:
+        task, args = callback(voice, True)
+        exec(task, args)

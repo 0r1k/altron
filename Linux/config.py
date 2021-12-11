@@ -8,6 +8,10 @@ conf = configparser.ConfigParser()
 alias = {
     "names": ["альтрона", "альтрон"],
     'cmds': {
+        'scenarios':{
+            'add':['добавь сценарий', 'создай сценарий', 'новый сценарий'],
+            'open':['запусти сценарий', 'начни сценарий', 'запусти сценарий', ]
+        },
         'weather': ['погода', "погоду"],
         'google': ['интернет', 'браузер', 'загугли', "найди", "гугл", "google"],
         'open': ['открой программу', 'открой приложение', 'открой',
@@ -27,7 +31,7 @@ alias = {
 }
 
 
-def firstConfig():
+def firstConfig(confile):
     speak("""Введите некоторую информацию для начала работы.
     Нажмите клавишу Enter, чтобы продолжить или клавишу esc, чтобы закрыть программу""")
     if is_pressed('enter'):
@@ -35,11 +39,16 @@ def firstConfig():
     elif is_pressed('esc'):
         return
     speak("Как к вам обращаться?")
-    conf.set('DEFAULT', 'name', input())
+    name = input()
     speak("Какой вы браузер используете? Напишите его название на английском")
-    conf.set('DEFAULT', 'browser', input())
+    browser = input()
     speak("В каком вы городе живёте? Напишите его название на английском")
-    conf.set('DEFAULT', 'city', input())
+    city = input()
+    confile['DEFAULT'] = {
+        'name': name,
+        'browser': browser,
+        'city': city,
+    }
     #adding to the file
-    f = open("./Linux/config.ini", 'w')
-    conf.write(f)
+    with open('config.ini', 'w') as f:
+        confile.write(f)

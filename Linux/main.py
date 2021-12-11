@@ -21,7 +21,7 @@ r = sr.Recognizer()
 
 #program main work
 if os.stat("./Linux/config.ini").st_size == 0:
-    firstConfig()
+    firstConfig(conf)
 
 if os.stat("./Linux/config.ini").st_size == 0:
     exit()
@@ -47,10 +47,11 @@ def getinfo():
     exec(task, args)
 
 
-def callback(v):
+def callback(v, is_macros = False):
     for name in alias['names']:
         if name in v:
             v = v.replace(name, '')
+        elif is_macros:
             for op in alias['cmds']:
                 if op == 'media_ctrl':
                     for inner_op in alias['cmds']['media-ctrl']:
@@ -94,13 +95,14 @@ def exec(task, args):
             if 'до' in args:
                 volume_change(int(args[-3:]))
             elif 'на' in args:
-                volume_change(change=(-1)**((task == 'vol-up')+1)*int(args[-3:]))
+                volume_change(change=(-1)**((task == 'vol-down'))*int(args[-3:]))
         elif task=='play' or task=='pause':
             subprocess.call(['playerctl', 'play-pause'])
         elif task=='wait':
             wait_mode = True
     else:
         if task=='start':
+            speak("К вашим услугам, {}".format(conf.get("DEFAULT", 'name')))
             wait_mode = False
 
 
