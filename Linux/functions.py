@@ -3,8 +3,10 @@ import time
 import subprocess
 import re
 import os
-from config import conf
-from main import callback, exec
+import configparser
+
+conf = configparser.ConfigParser()
+conf.read('config.ini')
 
 def speak(what):
     os.system("echo {} | RHVoice-test -p Aleksandr".format(what))
@@ -70,3 +72,30 @@ def exec_macros(confile, name):
     for voice in vs:
         task, args = callback(voice, True)
         exec(task, args)
+
+def callback(v, alias, is_macros = False):
+    print("Test for", v)
+    for name in alias['names']:
+        if name in v or is_macros:
+            v = v.replace(name, '')
+            print(v)
+            for op in alias['cmds']:
+                if op == 'media_ctrl':
+                    for inner_op in alias['cmds']['media-ctrl']:
+                        for cmd in alias['cmds']['media-ctrl'][inner_op]:
+                            if cmd in v:
+                                task = inner_op
+                                args = v.replace(cmd, '')
+                                print(args)
+                                return task, args
+                else:
+                    for cmd in alias['cmds'][op]:
+                        if cmd in v:
+                            task = op
+                            args = v.replace(cmd, '')
+                            print(args)
+                            return task, args
+            else:
+                return 0, 0
+    else:
+        return 0, 0

@@ -1,12 +1,12 @@
 import configparser
 
-from keyboard import is_pressed
+import time
 from functions import speak
 
 conf = configparser.ConfigParser()
 
 alias = {
-    "names": ["альтрона", "альтрон"],
+    "names": ["альтрона", "альтрон", "altron"],
     'cmds': {
         'scenarios':{
             'add':['добавь сценарий', 'создай сценарий', 'новый сценарий'],
@@ -33,11 +33,8 @@ alias = {
 
 def firstConfig(confile):
     speak("""Введите некоторую информацию для начала работы.
-    Нажмите клавишу Enter, чтобы продолжить или клавишу esc, чтобы закрыть программу""")
-    if is_pressed('enter'):
-        pass
-    elif is_pressed('esc'):
-        return
+    В любой момент вы можете ничего не ввести, чтобы закрыть программу""")
+    time.sleep(2)
     speak("Как к вам обращаться?")
     name = input()
     speak("Какой вы браузер используете? Напишите его название на английском")

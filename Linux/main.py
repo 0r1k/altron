@@ -10,6 +10,7 @@ import subprocess
 import time
 from functions import *
 import configparser
+import asyncio
 
 #variables
 
@@ -17,61 +18,45 @@ owmap = pyowm.OWM('44e45e2833d1c08430d69d5a7c59ac39')
 
 wait_mode = False
 
-r = sr.Recognizer()
-
 #program main work
-if os.stat("./Linux/config.ini").st_size == 0:
+if os.stat("./config.ini").st_size == 0:
     firstConfig(conf)
 
-if os.stat("./Linux/config.ini").st_size == 0:
-    exit()
-        
+if os.stat("./config.ini").st_size == 0:
+    exit()        
 
 def getinfo():
+    task, args = 0, 0
     try:
         with sr.Microphone() as m:
             r.adjust_for_ambient_noise(m)
-            print("Speak")
-            aud = r.listen(m)
-            recognized_all = [i.lower() for i in r.recognize_google(
-                aud, language='ru-RU', show_all=True)]
+            print("SAY")
+            audio = r.listen(m)
+        l = r.recognize_google(audio, language='ru-RU', show_all=True)
+        # print("Func:", l['alternative'])
+        if type(l)!=list:
+            recognized_all = [var['transcript'].lower() for var in l['alternative']]
+        else:
+            return
+        print(*recognized_all, sep='\n')
     except sr.UnknownValueError:
         speak("не удалось распознать речь")
     except sr.RequestError:
         speak("Неизвестеная ошибка. Проверьте подключение к интернету")
-
-    for voice in recognized_all:
-        task, args = callback(voice)
-        if not (task == 0 and args == 0):
-            break
+    if recognized_all==[]:
+        return
+    voice_num = 0
+    print(task, args)
+    while task==0 and args==0:
+        voice_num += 1
+        if voice_num==len(recognized_all):
+            return
+        task, args = callback(recognized_all[voice_num], alias)
+    # print(task, args)
     exec(task, args)
 
 
-def callback(v, is_macros = False):
-    for name in alias['names']:
-        if name in v:
-            v = v.replace(name, '')
-        elif is_macros:
-            for op in alias['cmds']:
-                if op == 'media_ctrl':
-                    for inner_op in alias['cmds']['media-ctrl']:
-                        for cmd in alias['cmds']['media-ctrl'][inner_op]:
-                            if cmd in v:
-                                task = inner_op
-                                args = v.replace(cmd, '')
-                                print(args)
-                                return task, args
-                else:
-                    for cmd in alias['cmds'][op]:
-                        if cmd in v:
-                            task = op
-                            args = v.replace(cmd, '')
-                            print(args)
-                            return task, args
-            else:
-                return 0, 0
-    else:
-        return 0, 0
+
 
 
 def exec(task, args):
@@ -84,7 +69,7 @@ def exec(task, args):
             print(det, tnow, flike, wspeed, wdeg)
             speak(f"""{det}, {int(tnow)} градусов, ощущается как {int(flike)}. Ветер {wdeg}, {int(wspeed)} метров в секунду""")
         elif task == 'google':
-            webbrowser.get(using=conf.get("DEFAULT", 'name', 'browser')).open_new_tab(
+            webbrowser.get(using=conf.get("DEFAULT", 'browser')).open_new_tab(
                 'https://www.google.com/search?q='+args)
         elif task == 'open':
             for anm in ['программу', 'приложение']:
@@ -105,6 +90,11 @@ def exec(task, args):
             speak("К вашим услугам, {}".format(conf.get("DEFAULT", 'name')))
             wait_mode = False
 
+r = sr.Recognizer()
+mic = sr.Microphone()
 
+with mic as source:
+    r.adjust_for_ambient_noise(source)
 
-getinfo()
+while True:
+    getinfo()
